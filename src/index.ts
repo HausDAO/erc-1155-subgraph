@@ -101,9 +101,6 @@ function registerTransfer(
     token.URI = callResult.value;
   }
 
-  let nameResult = contract.try_name();
-  let symbolResult = contract.try_symbol();
-
   token.save();
   ev.save();
 }
