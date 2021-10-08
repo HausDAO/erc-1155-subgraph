@@ -1,4 +1,4 @@
-import { ethereum, BigInt } from '@graphprotocol/graph-ts';
+import { ethereum, BigInt } from "@graphprotocol/graph-ts";
 
 import {
   Account,
@@ -6,26 +6,26 @@ import {
   Token,
   Balance,
   Transfer,
-} from '../generated/schema';
+} from "../generated/schema";
 
 import {
   TransferBatch as TransferBatchEvent,
   TransferSingle as TransferSingleEvent,
   URI as URIEvent,
   ApprovalForAll as ApprovalForAllEvent,
-} from '../generated/IERC1155/IERC1155';
+} from "../generated/IERC1155/IERC1155";
 
-import { IERC1155MetadataURI } from '../generated/IERC1155/IERC1155MetadataURI';
+import { IERC1155MetadataURI } from "../generated/IERC1155/IERC1155MetadataURI";
 
 import {
   constants,
   events,
   integers,
   transactions,
-} from '@amxx/graphprotocol-utils';
+} from "@amxx/graphprotocol-utils";
 
 function replaceAll(input: string, search: string[], replace: string): string {
-  let result = '';
+  let result = "";
   for (let i = 0; i < input.length; i++) {
     result += search.includes(input.charAt(i)) ? replace : input.charAt(i);
   }
@@ -33,7 +33,7 @@ function replaceAll(input: string, search: string[], replace: string): string {
 }
 
 function fetchToken(registry: TokenRegistry, id: BigInt): Token {
-  let tokenid = registry.id.concat('-').concat(id.toHex());
+  let tokenid = registry.id.concat("-").concat(id.toHex());
   let token = Token.load(tokenid);
   if (token == null) {
     token = new Token(tokenid);
@@ -45,7 +45,7 @@ function fetchToken(registry: TokenRegistry, id: BigInt): Token {
 }
 
 function fetchBalance(token: Token, account: Account): Balance {
-  let balanceid = token.id.concat('-').concat(account.id);
+  let balanceid = token.id.concat("-").concat(account.id);
   let balance = Balance.load(balanceid);
   if (balance == null) {
     balance = new Balance(balanceid);
@@ -104,6 +104,14 @@ function registerTransfer(
   let nameResult = contract.try_name();
   let symbolResult = contract.try_symbol();
 
+  if (!nameResult.reverted) {
+    token.name = nameResult.value;
+  }
+
+  if (!symbolResult.reverted) {
+    token.symbol = symbolResult.value;
+  }
+
   token.save();
   ev.save();
 }
@@ -126,7 +134,7 @@ export function handleTransferSingle(event: TransferSingleEvent): void {
 
   registerTransfer(
     event,
-    '',
+    "",
     registry,
     operator,
     from,
@@ -151,7 +159,7 @@ export function handleTransferBatch(event: TransferBatchEvent): void {
   for (let i = 0; i < ids.length; ++i) {
     registerTransfer(
       event,
-      '-'.concat(i.toString()),
+      "-".concat(i.toString()),
       registry,
       operator,
       from,
