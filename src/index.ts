@@ -101,17 +101,6 @@ function registerTransfer(
     token.URI = callResult.value;
   }
 
-  let nameResult = contract.try_name();
-  let symbolResult = contract.try_symbol();
-
-  if (!nameResult.reverted) {
-    token.name = nameResult.value;
-  }
-
-  if (!symbolResult.reverted) {
-    token.symbol = symbolResult.value;
-  }
-
   token.save();
   ev.save();
 }
